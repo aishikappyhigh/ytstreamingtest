@@ -14,15 +14,20 @@
 
 package com.google.android.apps.watchme;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
+
 /**
  * @author Ibrahim Ulukaya <ulukaya@google.com>
- *         <p/>
- *         AudioFrameGrabber class which records audio.
+ * <p/>
+ * AudioFrameGrabber class which records audio.
  */
 public class AudioFrameGrabber {
     private Thread thread;
@@ -38,9 +43,10 @@ public class AudioFrameGrabber {
      * Starts recording.
      *
      * @param frequency - Recording frequency.
+     * @param context
      */
-    public void start(int frequency) {
-        Log.d(MainActivity.APP_NAME, "start");
+    public void start(int frequency, Context context) {
+        Log.d("aishik", "start");
 
         this.frequency = frequency;
 
@@ -48,7 +54,7 @@ public class AudioFrameGrabber {
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                recordThread();
+                recordThread(context);
             }
         });
         thread.start();
@@ -56,48 +62,59 @@ public class AudioFrameGrabber {
 
     /**
      * Records audio and pushes to buffer.
+     *
+     * @param context
      */
-    public void recordThread() {
-        Log.d(MainActivity.APP_NAME, "recordThread");
+    public void recordThread(Context context) {
+        Log.d("aishik", "recordThread");
 
         int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
         int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
         int bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
-        Log.i(MainActivity.APP_NAME, "AudioRecord buffer size: " + bufferSize);
+        Log.d("aishik", "AudioRecord buffer size: " + bufferSize);
 
         // 16 bit PCM stereo recording was chosen as example.
-        AudioRecord recorder = new AudioRecord(MediaRecorder.AudioSource.CAMCORDER, frequency, channelConfiguration,
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Log.d("aishik", "recordThread: a1");
+        AudioRecord recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, frequency, channelConfiguration,
                 audioEncoding, bufferSize);
         recorder.startRecording();
-
+        Log.d("aishik", "recordThread: a");
         // Make bufferSize be in samples instead of bytes.
         bufferSize /= 2;
         short[] buffer = new short[bufferSize];
+        Log.d("aishik", "recordThread: b");
         while (!cancel) {
             int bufferReadResult = recorder.read(buffer, 0, bufferSize);
             // Utils.Debug("bufferReadResult: " + bufferReadResult);
+            Log.d("aishik", "recordThread: c");
             if (bufferReadResult > 0) {
                 frameCallback.handleFrame(buffer, bufferReadResult);
             } else if (bufferReadResult < 0) {
-                Log.w(MainActivity.APP_NAME, "Error calling recorder.read: " + bufferReadResult);
+                Log.d("aishik", "Error calling recorder.read: " + bufferReadResult);
             }
+            Log.d("aishik", "recordThread: D");
         }
         recorder.stop();
+        Log.d("aishik", "recordThread: E");
 
-        Log.d(MainActivity.APP_NAME, "exit recordThread");
+        Log.d("aishik", "exit recordThread");
     }
 
     /**
      * Stops recording.
      */
     public void stop() {
-        Log.d(MainActivity.APP_NAME, "stop");
+        Log.d("aishik", "stop");
 
         cancel = true;
         try {
             thread.join();
         } catch (InterruptedException e) {
-            Log.e(MainActivity.APP_NAME, "", e);
+            Log.d("aishik", "", e);
         }
     }
 

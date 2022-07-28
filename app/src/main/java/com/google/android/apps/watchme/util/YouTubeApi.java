@@ -60,91 +60,89 @@ public class YouTubeApi {
         futureDate.setTime(futureDateMillis);
         String date = dateFormat.format(futureDate);
 
-        Log.i(MainActivity.APP_NAME, String.format(
+        Log.d("aishik", String.format(
                 "Creating event: name='%s', description='%s', date='%s'.",
                 name, description, date));
 
         try {
-
+            Log.d("aishik", "createLiveEvent: a");
             LiveBroadcastSnippet broadcastSnippet = new LiveBroadcastSnippet();
             broadcastSnippet.setTitle(name);
             broadcastSnippet.setScheduledStartTime(new DateTime(futureDate));
-
+            Log.d("aishik", "createLiveEvent: b");
             LiveBroadcastContentDetails contentDetails = new LiveBroadcastContentDetails();
             MonitorStreamInfo monitorStream = new MonitorStreamInfo();
             monitorStream.setEnableMonitorStream(false);
+            Log.d("aishik", "createLiveEvent: c");
             contentDetails.setMonitorStream(monitorStream);
-
             // Create LiveBroadcastStatus with privacy status.
             LiveBroadcastStatus status = new LiveBroadcastStatus();
+            Log.d("aishik", "createLiveEvent: d");
             status.setPrivacyStatus("unlisted");
-
             LiveBroadcast broadcast = new LiveBroadcast();
             broadcast.setKind("youtube#liveBroadcast");
+            Log.d("aishik", "createLiveEvent: e");
             broadcast.setSnippet(broadcastSnippet);
             broadcast.setStatus(status);
             broadcast.setContentDetails(contentDetails);
-
             // Create the insert request
+            Log.d("aishik", "createLiveEvent: f");
             YouTube.LiveBroadcasts.Insert liveBroadcastInsert = youtube
                     .liveBroadcasts().insert("snippet,status,contentDetails",
                             broadcast);
 
             // Request is executed and inserted broadcast is returned
             LiveBroadcast returnedBroadcast = liveBroadcastInsert.execute();
+            Log.d("aishik", "createLiveEvent: g");
 
             // Create a snippet with title.
             LiveStreamSnippet streamSnippet = new LiveStreamSnippet();
             streamSnippet.setTitle(name);
-
+            Log.d("aishik", "createLiveEvent: h");
             // Create content distribution network with format and ingestion
             // type.
             CdnSettings cdn = new CdnSettings();
-            cdn.setFormat("240p");
+            cdn.setResolution("variable");
+            Log.d("aishik", "createLiveEvent: i");
+            cdn.setFrameRate("variable");
             cdn.setIngestionType("rtmp");
-
             LiveStream stream = new LiveStream();
             stream.setKind("youtube#liveStream");
+            Log.d("aishik", "createLiveEvent: j");
             stream.setSnippet(streamSnippet);
             stream.setCdn(cdn);
 
+            Log.d("aishik", "createLiveEvent: k");
             // Create the insert request
             YouTube.LiveStreams.Insert liveStreamInsert = youtube.liveStreams()
                     .insert("snippet,cdn", stream);
-
             // Request is executed and inserted stream is returned
+            Log.d("aishik", "createLiveEvent: l");
             LiveStream returnedStream = liveStreamInsert.execute();
-
+            Log.d("aishik", "createLiveEvent: m");
             // Create the bind request
             YouTube.LiveBroadcasts.Bind liveBroadcastBind = youtube
                     .liveBroadcasts().bind(returnedBroadcast.getId(),
                             "id,contentDetails");
-
             // Set stream id to bind
             liveBroadcastBind.setStreamId(returnedStream.getId());
-
+            Log.d("aishik", "createLiveEvent: n");
             // Request is executed and bound broadcast is returned
             liveBroadcastBind.execute();
-
+            Log.d("aishik", "createLiveEvent: o");
         } catch (GoogleJsonResponseException e) {
-            System.err.println("GoogleJsonResponseException code: "
-                    + e.getDetails().getCode() + " : "
-                    + e.getDetails().getMessage());
-            e.printStackTrace();
-
+            Log.d("aishik", "GoogleJsonResponseException code: " + e.getDetails().getCode() + " : " + e.getDetails().getMessage());
         } catch (IOException e) {
-            System.err.println("IOException: " + e.getMessage());
-            e.printStackTrace();
+            Log.d("aishik","IOException: " + e.getMessage());
         } catch (Throwable t) {
-            System.err.println("Throwable: " + t.getStackTrace());
-            t.printStackTrace();
+            Log.d("aishik","Throwable: " + t.getStackTrace());
         }
     }
 
     // TODO: Catch those exceptions and handle them here.
     public static List<EventData> getLiveEvents(
             YouTube youtube) throws IOException {
-        Log.i(MainActivity.APP_NAME, "Requesting live events.");
+        Log.d("aishik", "Requesting live events.");
 
         YouTube.LiveBroadcasts.List liveBroadcastRequest = youtube
                 .liveBroadcasts().list("id,snippet,contentDetails");
@@ -157,13 +155,18 @@ public class YouTubeApi {
         // Get the list of broadcasts associated with the user.
         List<LiveBroadcast> returnedList = returnedListResponse.getItems();
 
-        List<EventData> resultList = new ArrayList<EventData>(returnedList.size());
+        List<EventData> resultList = new ArrayList<>(returnedList.size());
         EventData event;
 
         for (LiveBroadcast broadcast : returnedList) {
             event = new EventData();
             event.setEvent(broadcast);
             String streamId = broadcast.getContentDetails().getBoundStreamId();
+            Log.d("aishik", "getLiveEvents: "+event.getIngestionAddress());
+            Log.d("aishik", "getLiveEvents: "+event.getThumbUri());
+            Log.d("aishik", "getLiveEvents: "+event.getTitle());
+            Log.d("aishik", "getLiveEvents: "+event.getWatchUri());
+            Log.d("aishik", "getLiveEvents: "+event.getEvent());
             if (streamId != null) {
                 String ingestionAddress = getIngestionAddress(youtube, streamId);
                 event.setIngestionAddress(ingestionAddress);
@@ -179,7 +182,7 @@ public class YouTubeApi {
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
-            Log.e(MainActivity.APP_NAME, "", e);
+            Log.d("aishik", "", e);
         }
 
         Transition transitionRequest = youtube.liveBroadcasts().transition(

@@ -3,23 +3,27 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'keystore'
-            keyPassword '123'
-            storeFile file('/home/rashi/StudioProjects/allbits-watchme/keystore.jks')
-            storePassword '123'
+            keyAlias 'key0'
+            keyPassword '123456'
+            storeFile file('C:\\Users\\aishi\\Desktop\\youtube-livestream-android-app\\mykey.jks')
+            storePassword '123456'
         }
     }
-    compileSdkVersion 22
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 32
+    buildToolsVersion '25.0.3'
     defaultConfig {
-        applicationId "com.google.android.apps.watchme"
+        applicationId "com.aishik.youtubeLive"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 32
         versionCode 1
+        multiDexEnabled true
         versionName "1.0"
         sourceSets.main {
             jniLibs.srcDir 'src/main/libs'
             jni.srcDirs = [] //disable automatic ndk-build call
+        }
+        ndk {
+            abiFilters "armeabi-v7a", "x86", "armeabi", "mips"
         }
     }
     buildTypes {
@@ -38,17 +42,21 @@ android {
     configurations {
         compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
     }
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.google.android.gms:play-services-plus:7.8.0'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:design:22.2.0'
-    compile 'com.google.apis:google-api-services-youtube:v3-rev120-1.19.0'
-    compile 'com.google.http-client:google-http-client-android:+'
-    compile 'com.google.api-client:google-api-client-android:+'
-    compile 'com.google.api-client:google-api-client-gson:+'
-    compile 'com.mcxiaoke.volley:library:1.0.18'
-    compile 'com.google.code.gson:gson:2.3'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.google.android.gms:play-services-plus:17.0.0'
+    implementation 'com.android.support:support-v4:22.2.0'
+    implementation 'com.android.support:design:22.2.0'
+    implementation 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
+    implementation 'com.google.http-client:google-http-client-android:1.42.2'
+    implementation 'com.google.api-client:google-api-client-android:1.35.0'
+    implementation 'com.google.api-client:google-api-client-gson:1.35.0'
+    implementation 'com.mcxiaoke.volley:library:1.0.18'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.android.gms:play-services-auth-base:18.0.3'
 }

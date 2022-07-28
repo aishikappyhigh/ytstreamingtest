@@ -57,7 +57,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         if (camera != null) {
             supportedPreviewSizes = camera.getParameters().getSupportedPreviewSizes();
             for (Size s : supportedPreviewSizes) {
-                Log.d(MainActivity.APP_NAME, String.format("Supported size: %dw x %dh", s.width, s.height));
+                Log.d("aishik", String.format("Supported size: %dw x %dh", s.width, s.height));
             }
             requestLayout();
         }
@@ -114,7 +114,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
                 camera.setPreviewDisplay(holder);
             }
         } catch (IOException exception) {
-            Log.e(MainActivity.APP_NAME, "IOException caused by setPreviewDisplay()", exception);
+            Log.d("aishik", "IOException caused by setPreviewDisplay()", exception);
         }
     }
 
@@ -125,7 +125,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
             try {
                 camera.setPreviewDisplay(null);
             } catch (IOException e) {
-                Log.e(MainActivity.APP_NAME, "Caught IOException", e);
+                Log.d("aishik", "Caught IOException", e);
             }
         }
     }
@@ -178,7 +178,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
             try {
                 camera.setPreviewDisplay(holder);
             } catch (IOException e) {
-                Log.e(MainActivity.APP_NAME, "", e);
+                Log.d("aishik", "", e);
             }
             camera.startPreview();
         }

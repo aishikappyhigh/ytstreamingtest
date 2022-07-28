@@ -30,8 +30,8 @@ import com.google.android.apps.watchme.util.Utils;
 
 /**
  * @author Ibrahim Ulukaya <ulukaya@google.com>
- *         <p/>
- *         StreamerService class which streams the video from camera.
+ * <p/>
+ * StreamerService class which streams the video from camera.
  */
 public class StreamerService extends Service {
     private static int STREAMER_NOTIFICATION_ID = 1001;
@@ -42,38 +42,39 @@ public class StreamerService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d(MainActivity.APP_NAME, "onCreate");
+        Log.d("aishik", "onCreate");
     }
 
     @Override
     public void onDestroy() {
-        Log.d(MainActivity.APP_NAME, "onDestroy");
+        Log.d("aishik", "onDestroy");
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         camera = Utils.getCamera(CameraInfo.CAMERA_FACING_FRONT);
-        Log.d(MainActivity.APP_NAME, "onBind");
+        Log.d("aishik", "onBind");
         return binder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(MainActivity.APP_NAME, "onUnbind");
+        Log.d("aishik", "onUnbind");
 
         return false;
     }
 
     public void startStreaming(String streamUrl) {
-        Log.d(MainActivity.APP_NAME, "startStreaming");
+        Log.d("aishik", "startStreaming");
         showForegroundNotification();
-        connection = new VideoStreamingConnection();
+        Log.d("aishik", "startStreaming: "+streamUrl);
+        connection = new VideoStreamingConnection(getApplicationContext());
         // TODO Pass an actual preview surface.
         connection.open(streamUrl, camera, null);
     }
 
     public void stopStreaming() {
-        Log.d(MainActivity.APP_NAME, "stopStreaming");
+        Log.d("aishik", "stopStreaming");
 
         if (connection != null) {
             connection.close();
@@ -87,13 +88,13 @@ public class StreamerService extends Service {
     }
 
     public void releaseCamera() {
-        Log.d(MainActivity.APP_NAME, "releaseCamera");
+        Log.d("aishik", "releaseCamera");
         if (!isStreaming() && camera != null) {
             Utils.releaseCamera();
-            Log.d(MainActivity.APP_NAME, "Camera was released.");
+            Log.d("aishik", "Camera was released.");
             camera = null;
         } else {
-            Log.d(MainActivity.APP_NAME, "Camera was not released.");
+            Log.d("aishik", "Camera was not released.");
         }
     }
 
@@ -107,8 +108,14 @@ public class StreamerService extends Service {
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         // The PendingIntent to launch our activity if the user selects this notification.
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent contentIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            contentIntent = PendingIntent.getActivity(this, 0,
+                    notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            contentIntent = PendingIntent.getActivity(this, 0,
+                    notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        }
 
         Notification notification = new Notification.Builder(getApplicationContext())
                 .setContentTitle(getText(R.string.activeStreamingLabel))

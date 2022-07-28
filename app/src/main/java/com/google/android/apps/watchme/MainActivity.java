@@ -1,16 +1,3 @@
-/*
- * Copyright (c) 2014 Google Inc.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
 
 package com.google.android.apps.watchme;
 
@@ -50,15 +37,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Ibrahim Ulukaya <ulukaya@google.com>
- *         <p/>
- *         Main activity class which handles authorization and intents.
- */
 public class MainActivity extends Activity implements
         EventsListFragment.Callbacks {
-    public static final String ACCOUNT_KEY = "AIzaSyB-rQ6A4lFhIBdmcavwYGBue0LiQyH5mkc";
-    public static final String APP_NAME = "WatchMe";
+    public static final String ACCOUNT_KEY = "956733251027-29pdad2d22g7027m92ncn6n7p65s3cgb.apps.googleusercontent.com";
+    public static final String APP_NAME = "youtubeLive";
     private static final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
     private static final int REQUEST_GMS_ERROR_DIALOG = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 2;
@@ -194,8 +176,15 @@ public class MainActivity extends Activity implements
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
+                Log.d("aishik", "onActivityResult: 1 "+resultCode+" "+data);
                 if (resultCode == Activity.RESULT_OK && data != null
                         && data.getExtras() != null) {
+                    final Bundle extras = data.getExtras();
+                    for(String s : extras.keySet())
+                    {
+                        Log.d("aishik", "onActivityResult: 2 "+s+" "+extras.get(s));
+                    }
+                    Log.d("aishik", "onActivityResult: 4 "+" "+ extras);
                     String accountName = data.getExtras().getString(
                             AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
@@ -309,7 +298,7 @@ public class MainActivity extends Activity implements
             } catch (UserRecoverableAuthIOException e) {
                 startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             } catch (IOException e) {
-                Log.e(MainActivity.APP_NAME, "", e);
+                Log.d("aishik", "", e);
             }
             return null;
         }
@@ -348,11 +337,10 @@ public class MainActivity extends Activity implements
                 YouTubeApi.createLiveEvent(youtube, "Event - " + date,
                         "A live streaming event - " + date);
                 return YouTubeApi.getLiveEvents(youtube);
-
             } catch (UserRecoverableAuthIOException e) {
                 startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             } catch (IOException e) {
-                Log.e(MainActivity.APP_NAME, "", e);
+                Log.d("aishik", "doInBackground: "+e.getLocalizedMessage());
             }
             return null;
         }
@@ -387,7 +375,7 @@ public class MainActivity extends Activity implements
             } catch (UserRecoverableAuthIOException e) {
                 startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             } catch (IOException e) {
-                Log.e(MainActivity.APP_NAME, "", e);
+                Log.d("aishik", "", e);
             }
             return null;
         }
@@ -420,7 +408,7 @@ public class MainActivity extends Activity implements
             } catch (UserRecoverableAuthIOException e) {
                 startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             } catch (IOException e) {
-                Log.e(MainActivity.APP_NAME, "", e);
+                Log.d("aishik", "", e);
             }
             return null;
         }

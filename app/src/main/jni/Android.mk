@@ -16,6 +16,8 @@
 
 WORKING_DIR := $(call my-dir)
 
+$(error "adad")
+
 include $(CLEAR_VARS)
 LOCAL_PATH := $(WORKING_DIR)/../third_party/lame/libmp3lame
 LOCAL_MODULE    := lame

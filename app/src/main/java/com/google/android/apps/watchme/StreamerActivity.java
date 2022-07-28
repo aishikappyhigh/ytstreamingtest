@@ -25,8 +25,6 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,7 +56,7 @@ public class StreamerActivity extends Activity {
     private ServiceConnection streamerConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.d(MainActivity.APP_NAME, "onServiceConnected");
+            Log.d("aishik", "onServiceConnected");
 
             streamerService = ((StreamerService.LocalBinder) service).getService();
 
@@ -68,7 +66,7 @@ public class StreamerActivity extends Activity {
 
         @Override
         public void onServiceDisconnected(ComponentName className) {
-            Log.e(MainActivity.APP_NAME, "onServiceDisconnected");
+            Log.d("aishik", "onServiceDisconnected");
 
             // This should never happen, because our service runs in the same process.
             streamerService = null;
@@ -78,7 +76,7 @@ public class StreamerActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(MainActivity.APP_NAME, "onCreate");
+        Log.d("aishik", "onCreate");
         super.onCreate(savedInstanceState);
 
         broadcastId = getIntent().getStringExtra(YouTubeApi.BROADCAST_ID_KEY);
@@ -87,17 +85,17 @@ public class StreamerActivity extends Activity {
         rtmpUrl = getIntent().getStringExtra(YouTubeApi.RTMP_URL_KEY);
 
         if (rtmpUrl == null) {
-            Log.w(MainActivity.APP_NAME, "No RTMP URL was passed in; bailing.");
+            Log.d("aishik", "No RTMP URL was passed in; bailing.");
             finish();
         }
-        Log.i(MainActivity.APP_NAME, String.format("Got RTMP URL '%s' from calling activity.", rtmpUrl));
+        Log.d("aishik", String.format("Got RTMP URL '%s' from calling activity.", rtmpUrl));
 
         setContentView(R.layout.streamer);
         preview = (Preview) findViewById(R.id.surfaceViewPreview);
 
         if (!bindService(new Intent(this, StreamerService.class), streamerConnection,
                 BIND_AUTO_CREATE | BIND_DEBUG_UNBIND)) {
-            Log.e(MainActivity.APP_NAME, "Failed to bind StreamerService!");
+            Log.d("aishik", "Failed to bind StreamerService!");
         }
 
         final ToggleButton toggleButton = (ToggleButton) findViewById(R.id.toggleBroadcasting);
@@ -115,7 +113,7 @@ public class StreamerActivity extends Activity {
 
     @Override
     protected void onResume() {
-        Log.d(MainActivity.APP_NAME, "onResume");
+        Log.d("aishik", "onResume");
 
         super.onResume();
 
@@ -126,7 +124,7 @@ public class StreamerActivity extends Activity {
 
     @Override
     protected void onPause() {
-        Log.d(MainActivity.APP_NAME, "onPause");
+        Log.d("aishik", "onPause");
 
         super.onPause();
 
@@ -141,7 +139,7 @@ public class StreamerActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        Log.d(MainActivity.APP_NAME, "onDestroy");
+        Log.d("aishik", "onDestroy");
 
         super.onDestroy();
 
@@ -161,7 +159,7 @@ public class StreamerActivity extends Activity {
     }
 
     private void startStreaming() {
-        Log.d(MainActivity.APP_NAME, "startStreaming");
+        Log.d("aishik", "startStreaming");
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, this.getClass().getName());
@@ -220,7 +218,7 @@ public class StreamerActivity extends Activity {
 //                                           String permissions[], int[] grantResults) {
 //        switch (requestCode) {
 //            case REQUEST_CAMERA_MICROPHONE: {
-//                Log.i(MainActivity.APP_NAME, "Received response for camera with mic permissions request.");
+//                Log.d("aishik", "Received response for camera with mic permissions request.");
 //
 //                // We have requested multiple permissions for contacts, so all of them need to be
 //                // checked.
@@ -229,7 +227,7 @@ public class StreamerActivity extends Activity {
 //                    // streamer task you need to do.
 //                    streamerService.startStreaming(rtmpUrl);
 //                } else {
-//                    Log.i(MainActivity.APP_NAME, "Camera with mic permissions were NOT granted.");
+//                    Log.d("aishik", "Camera with mic permissions were NOT granted.");
 //                    Snackbar.make(preview, R.string.permissions_not_granted,
 //                            Snackbar.LENGTH_SHORT)
 //                            .show();
@@ -245,7 +243,7 @@ public class StreamerActivity extends Activity {
 
 
     private void stopStreaming() {
-        Log.d(MainActivity.APP_NAME, "stopStreaming");
+        Log.d("aishik", "stopStreaming");
 
         if (wakeLock != null) {
             wakeLock.release();

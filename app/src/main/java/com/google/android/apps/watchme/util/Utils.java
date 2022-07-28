@@ -50,7 +50,7 @@ public class Utils {
                     try {
                         camera = Camera.open(i);
                     } catch (RuntimeException e) {
-                        Log.e(MainActivity.APP_NAME, String.format("Couldn't open camera type '%d'.", cameraType), e);
+                        Log.d("aishik", String.format("Couldn't open camera type '%d'.", cameraType), e);
                     }
                 }
             }

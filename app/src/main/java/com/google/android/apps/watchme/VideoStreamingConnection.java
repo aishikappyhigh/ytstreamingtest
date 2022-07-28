@@ -14,6 +14,7 @@
 
 package com.google.android.apps.watchme;
 
+import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.view.Surface;
 public class VideoStreamingConnection implements VideoStreamingInterface {
     // CONSTANTS.
     private static final int AUDIO_SAMPLE_RATE = 44100;
+    private final Context context;
 
     // Member variables.
     private VideoFrameGrabber videoFrameGrabber;
@@ -30,9 +32,13 @@ public class VideoStreamingConnection implements VideoStreamingInterface {
     private Object frame_mutex = new Object();
     private boolean encoding;
 
+    public VideoStreamingConnection(Context applicationContext) {
+        this.context = applicationContext;
+    }
+
     @Override
     public void open(String url, Camera camera, Surface previewSurface) {
-        Log.d(MainActivity.APP_NAME, "open");
+        Log.d("aishik", "open");
 
         videoFrameGrabber = new VideoFrameGrabber();
         videoFrameGrabber.setFrameCallback(new VideoFrameGrabber.FrameCallback() {
@@ -64,19 +70,19 @@ public class VideoStreamingConnection implements VideoStreamingInterface {
 
         synchronized (frame_mutex) {
             Size previewSize = videoFrameGrabber.start(camera);
-            audioFrameGrabber.start(AUDIO_SAMPLE_RATE);
+            audioFrameGrabber.start(AUDIO_SAMPLE_RATE, context);
 
             int width = previewSize.width;
             int height = previewSize.height;
+//            FFmpeg
             encoding = Ffmpeg.init(width, height, AUDIO_SAMPLE_RATE, url);
-
-            Log.i(MainActivity.APP_NAME, "Ffmpeg.init() returned " + encoding);
+            Log.d("aishik", "Ffmpeg.init() returned " + encoding);
         }
     }
 
     @Override
     public void close() {
-        Log.i(MainActivity.APP_NAME, "close");
+        Log.d("aishik", "close");
 
         videoFrameGrabber.stop();
         audioFrameGrabber.stop();
