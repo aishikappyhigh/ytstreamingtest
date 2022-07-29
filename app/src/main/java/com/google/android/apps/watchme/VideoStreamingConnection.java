@@ -30,7 +30,7 @@ public class VideoStreamingConnection implements VideoStreamingInterface {
     private VideoFrameGrabber videoFrameGrabber;
     private AudioFrameGrabber audioFrameGrabber;
     private Object frame_mutex = new Object();
-    private boolean encoding;
+    private boolean encoding = false;
 
     public VideoStreamingConnection(Context applicationContext) {
         this.context = applicationContext;
@@ -44,6 +44,7 @@ public class VideoStreamingConnection implements VideoStreamingInterface {
         videoFrameGrabber.setFrameCallback(new VideoFrameGrabber.FrameCallback() {
             @Override
             public void handleFrame(byte[] yuv_image) {
+                Log.d("aishik", "handleFrame: ");
                 if (encoding) {
                     synchronized (frame_mutex) {
                         int encoded_size = Ffmpeg.encodeVideoFrame(yuv_image);
@@ -75,7 +76,8 @@ public class VideoStreamingConnection implements VideoStreamingInterface {
             int width = previewSize.width;
             int height = previewSize.height;
 //            FFmpeg
-            encoding = Ffmpeg.init(width, height, AUDIO_SAMPLE_RATE, url);
+
+//            encoding = Ffmpeg.init(width, height, AUDIO_SAMPLE_RATE, url);
             Log.d("aishik", "Ffmpeg.init() returned " + encoding);
         }
     }
